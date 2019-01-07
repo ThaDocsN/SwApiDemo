@@ -1,9 +1,13 @@
 package com.lambdaschool.swapi;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+//import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -13,7 +17,10 @@ public class MainActivity extends AppCompatActivity {
         (new Thread(new Runnable() {
             @Override
             public void run() {
-                SwApiDao.getAllPlanets();
+                final ArrayList<Transport> allTransports = SwApiDao.getAllTransports();
+                for(Transport transport: allTransports) {
+                    Log.i("Transports Result", transport.toString());
+                }
             }
         })).start();
     }

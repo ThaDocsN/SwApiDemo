@@ -6,20 +6,20 @@ import org.json.JSONObject;
 
 public class Planet
 {
-    private String edited;
-    private String terrain;
-    private String diameter;
-    private String[] films;
-    private String url;
-    private String surface_water;
-    private String orbital_period;
-    private String created;
-    private String name;
-    private String rotation_period;
-    private String climate;
-    private String gravity;
-    private String population;
-    private String[] residents;
+    protected String edited;
+    protected String terrain;
+    protected String diameter;
+    protected String[] films;
+    protected String url;
+    protected String surface_water;
+    protected String orbital_period;
+    protected String created;
+    protected String name;
+    protected String rotation_period;
+    protected String climate;
+    protected String gravity;
+    protected String population;
+    protected String[] residents;
 
     public Planet(JSONObject json) {
         try {
