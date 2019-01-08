@@ -7,7 +7,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class SwApiDao {
-    public static ArrayList<Planet> getAllPlanets() {
+    public interface PlanetCallback {
+        void returnPlanets(ArrayList<Planet> planets);
+    }
+
+    public static ArrayList<Planet> getAllPlanets(final PlanetCallback planetCallback) {
         final ArrayList<Planet> planets = new ArrayList<>();
         final NetworkAdapter.NetworkCallback callback = new NetworkAdapter.NetworkCallback() {
             @Override
@@ -23,10 +27,6 @@ public class SwApiDao {
                 // yay recursion!
                 if (nextUrl != null) {
                     NetworkAdapter.httpGetRequest(nextUrl, this);
-                } else {
-                    synchronized (planets) {
-                        planets.notify();
-                    }
                 }
 
                 try {
@@ -41,6 +41,13 @@ public class SwApiDao {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                }
+
+                if (nextUrl == null) {
+                    /*synchronized (planets) {
+                        planets.notify();
+                    }*/
+                    planetCallback.returnPlanets(planets);
                 }
             }
         };

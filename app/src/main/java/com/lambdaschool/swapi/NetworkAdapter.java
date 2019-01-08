@@ -13,7 +13,6 @@ public class NetworkAdapter {
         void returnResult(Boolean success, String result);
     }
 
-
     public static void httpGetRequest(final String urlString, final NetworkCallback callback) {
         new Thread(new Runnable() {
             @Override

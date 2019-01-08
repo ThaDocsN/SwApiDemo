@@ -24,9 +24,19 @@ public class MainActivity extends AppCompatActivity {
             }
         })).start();*/
 
-        final ArrayList<Planet> allPlanets = SwApiDao.getAllPlanets();
+        final ArrayList<Planet> allPlanets = SwApiDao.getAllPlanets(new SwApiDao.PlanetCallback() {
+            @Override
+            public void returnPlanets(final ArrayList<Planet> planets) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((TextView) findViewById(R.id.output_text_view)).setText(planets.toString());
+                    }
+                });
+            }
+        });
 
-        new Thread(new Runnable() {
+        /*new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -43,6 +53,6 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        }).start();*/
     }
 }
