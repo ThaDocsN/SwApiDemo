@@ -1,20 +1,20 @@
 package com.lambdaschool.swapi;
 
-import android.app.Activity;
-//import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        (new Thread(new Runnable() {
+        /*(new Thread(new Runnable() {
             @Override
             public void run() {
                 final ArrayList<Transport> allTransports = SwApiDao.getAllTransports();
@@ -22,6 +22,27 @@ public class MainActivity extends Activity {
                     Log.i("Transports Result", transport.toString());
                 }
             }
-        })).start();
+        })).start();*/
+
+        final ArrayList<Planet> allPlanets = SwApiDao.getAllPlanets();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    synchronized (allPlanets) {
+                        allPlanets.wait();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((TextView) findViewById(R.id.output_text_view)).setText(allPlanets.toString());
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
