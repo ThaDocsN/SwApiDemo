@@ -7,6 +7,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class SwApiDao {
+
+    public interface TransportCallback {
+        public void returnTransports(ArrayList<Transport> objects);
+    }
+
     public static ArrayList<Planet> getAllPlanets() {
         ArrayList<Planet> planets = new ArrayList<>();
         String nextUrl = "https://swapi.co/api/planets";
@@ -38,60 +43,128 @@ public class SwApiDao {
         return planets;
     }
 
-    public static ArrayList<Transport> getAllTransports() {
-        ArrayList<Transport> transports = new ArrayList<>();
-        String nextUrl = "https://swapi.co/api/vehicles";
-        while(nextUrl != null) {
-            String page = NetworkAdapter.httpGetRequest(nextUrl);
+    public static void getAllTransports(final ArrayList<Transport> transports) {
+//        ArrayList<Transport> transports = new ArrayList<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String nextUrl = "https://swapi.co/api/vehicles";
+                while(nextUrl != null) {
+                    String page = NetworkAdapter.httpGetRequest(nextUrl);
 
-            // process page of data
-            try {
-                JSONObject pageJson     = new JSONObject(page);
-                JSONArray  resultsArray = pageJson.getJSONArray("results");
-                for (int i = 0; i < resultsArray.length(); ++i) {
+                    // process page of data
                     try {
-                        transports.add(new Vehicle(resultsArray.getJSONObject(i)));
+                        JSONObject pageJson     = new JSONObject(page);
+                        JSONArray  resultsArray = pageJson.getJSONArray("results");
+                        for (int i = 0; i < resultsArray.length(); ++i) {
+                            try {
+                                transports.add(new Vehicle(resultsArray.getJSONObject(i)));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
-            try {
-                nextUrl = new JSONObject(page).getString("next");
-            } catch (JSONException e) {
-                e.printStackTrace();
-                nextUrl = null;
-            }
-        }
-        nextUrl = "https://swapi.co/api/starships";
-        while(nextUrl != null) {
-            String page = NetworkAdapter.httpGetRequest(nextUrl);
-
-            // process page of data
-            try {
-                JSONObject pageJson     = new JSONObject(page);
-                JSONArray  resultsArray = pageJson.getJSONArray("results");
-                for (int i = 0; i < resultsArray.length(); ++i) {
                     try {
-                        transports.add(new Vehicle(resultsArray.getJSONObject(i)));
+                        nextUrl = new JSONObject(page).getString("next");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        nextUrl = null;
+                    }
+                }
+                nextUrl = "https://swapi.co/api/starships";
+                while(nextUrl != null) {
+                    String page = NetworkAdapter.httpGetRequest(nextUrl);
+
+                    // process page of data
+                    try {
+                        JSONObject pageJson     = new JSONObject(page);
+                        JSONArray  resultsArray = pageJson.getJSONArray("results");
+                        for (int i = 0; i < resultsArray.length(); ++i) {
+                            try {
+                                transports.add(new Vehicle(resultsArray.getJSONObject(i)));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
-            try {
-                nextUrl = new JSONObject(page).getString("next");
-            } catch (JSONException e) {
-                e.printStackTrace();
-                nextUrl = null;
+                    try {
+                        nextUrl = new JSONObject(page).getString("next");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        nextUrl = null;
+                    }
+                }
+//                return transports;
             }
-        }
-        return transports;
+        }).start();
+    }
+
+    public static void getAllTransports(final TransportCallback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Transport> transports = new ArrayList<>();
+                String nextUrl = "https://swapi.co/api/vehicles";
+                while(nextUrl != null) {
+                    String page = NetworkAdapter.httpGetRequest(nextUrl);
+
+                    // process page of data
+                    try {
+                        JSONObject pageJson     = new JSONObject(page);
+                        JSONArray  resultsArray = pageJson.getJSONArray("results");
+                        for (int i = 0; i < resultsArray.length(); ++i) {
+                            try {
+                                transports.add(new Vehicle(resultsArray.getJSONObject(i)));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        nextUrl = new JSONObject(page).getString("next");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        nextUrl = null;
+                    }
+                }
+                nextUrl = "https://swapi.co/api/starships";
+                while(nextUrl != null) {
+                    String page = NetworkAdapter.httpGetRequest(nextUrl);
+
+                    // process page of data
+                    try {
+                        JSONObject pageJson     = new JSONObject(page);
+                        JSONArray  resultsArray = pageJson.getJSONArray("results");
+                        for (int i = 0; i < resultsArray.length(); ++i) {
+                            try {
+                                transports.add(new Vehicle(resultsArray.getJSONObject(i)));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        nextUrl = new JSONObject(page).getString("next");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        nextUrl = null;
+                    }
+                }
+                callback.returnTransports(transports);
+            }
+        }).start();
+
     }
 }
