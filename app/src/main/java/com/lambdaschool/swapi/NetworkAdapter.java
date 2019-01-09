@@ -17,6 +17,14 @@ public class NetworkAdapter {
         new Thread(new Runnable() {
             @Override
             public void run() {
+
+                try {
+                    Thread.sleep((long) (Math.random() * 500));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
                 String result = "";
                 boolean success = false;
                 HttpURLConnection connection = null;
