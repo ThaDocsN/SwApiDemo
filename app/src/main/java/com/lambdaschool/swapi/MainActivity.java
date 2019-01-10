@@ -2,9 +2,11 @@ package com.lambdaschool.swapi;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
             }
         })).start();*/
 
-        SwApiDao.getAllPlanets(new SwApiDao.ObjectCallback<ArrayList<Planet>>() {
+        AtomicBoolean canceled = new AtomicBoolean(false);
+        SwApiDao.getAllPlanets(canceled, new SwApiDao.ObjectCallback<ArrayList<Planet>>() {
             @Override
             public void returnPlanets(final ArrayList<Planet> planets) {
                 runOnUiThread(new Runnable() {
@@ -34,10 +37,18 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+        try {
+            Thread.sleep(150);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        canceled.set(true);
 
+        /*final long start = System.currentTimeMillis();
         SwApiDao.getAllTransports(new SwApiDao.ObjectCallback<Transport>() {
             @Override
             public void returnPlanets(final Transport transports) {
+                Log.i("Transport Timer", Long.toString(System.currentTimeMillis() - start));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -49,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
-        });
+        });*/
 
         /*new Thread(new Runnable() {
             @Override
