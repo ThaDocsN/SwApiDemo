@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
             }
         })).start();*/
 
+
         AtomicBoolean canceled = new AtomicBoolean(false);
         SwApiDao.getAllPlanets(canceled, new SwApiDao.ObjectCallback<ArrayList<Planet>>() {
             @Override
